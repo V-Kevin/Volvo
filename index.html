@@ -1,0 +1,245 @@
+<html>
+    <head>
+        <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script type="text/javascript" src="https://www.volvocars.com/Static/scripts/jquery-2.1.4.min.js?v=1.1.319.0"></script>
+      
+        <script>
+            let map;
+            let dealers =[];
+
+
+            $(document).ready(function(){
+                $('input:checkbox').click(function() {
+                    var tex= $(this).val();
+                    $('#model').val(tex);
+                    $('input:checkbox').not(this).prop('checked', false);
+                });
+
+                $("#searchDealer").click(function(){
+                    var dealercode = $("#dealerpostalcode").val();
+                    getDealerByPostalCode2(dealercode);
+                })
+
+                $('#dealerform').on('keyup keypress', function(e) {
+                    var keyCode = e.keyCode || e.which;
+                    if (keyCode === 13) { 
+                      e.preventDefault();
+                      return false;
+                    }
+                  });
+            });
+               
+       
+
+            function getJSONMarkers() {
+                var map_markers = [];
+                $.getJSON("dealer.json", function(data){
+                    localStorage.setItem("dealer", JSON.stringify(data));
+                    data.forEach(function(obj) {
+                         var map_marker ={};
+                         map_marker["name"] =obj.Name;
+                         var map_location =[];
+                         map_location[0]=obj.GeoCode.Latitude;
+                         map_location[1]= obj.GeoCode.Longitude
+                         map_marker["location"]=map_location;
+                         map_marker["address"]=obj.AddressLine1;
+                         map_markers.push(map_marker);   
+                    });
+                    loadMap(map_markers);
+                }).fail(function(){
+                    console.log('error');
+                });
+    
+            }
+
+    
+            function getDealerByPostalCode(postalCode) {
+                var map_markers = [];
+                var dealers =JSON.parse(localStorage.getItem("dealer"));
+                $.getJSON("dealer.json", function(data){
+                    data.forEach(function(obj) {
+                         if(obj.PostalCode ==postalCode){
+                            var map_marker ={};
+                            map_marker["name"] =obj.Name +''+obj.AddressLine1;
+                            var map_location =[];
+                            map_location[0]=obj.GeoCode.Latitude;
+                            map_location[1]= obj.GeoCode.Longitude
+                            map_marker["location"]=map_location;
+                            map_markers.push(map_marker);   
+                         }
+                         
+                    });
+                    loadMap(map_markers);
+                }).fail(function(){
+                    console.log('error');
+                });
+    
+            }
+
+
+            function getDealerByPostalCode2(postalCode) {
+                var map_markers = [];
+                var dealers =JSON.parse(localStorage.getItem("dealer"));
+               
+                dealers.forEach(function(obj) {
+                         if(obj.PostalCode ==postalCode){
+                            var map_marker ={};
+                            map_marker["name"] =obj.Name +''+obj.AddressLine1;
+                            var map_location =[];
+                            map_location[0]=obj.GeoCode.Latitude;
+                            map_location[1]= obj.GeoCode.Longitude
+                            map_marker["location"]=map_location;
+                            map_markers.push(map_marker);   
+                         }
+                         
+                    });
+                    loadMap(map_markers);
+    
+            }
+
+            function loadMap(map_markers) {
+              const mapOptions = {
+                center:new google.maps.LatLng(35.00012, 135.7185),
+                zoom: 8
+              }
+              const map = new google.maps.Map(document.getElementById("googleMap"), mapOptions);
+    
+              for(hotel of map_markers) {
+                let marker = new google.maps.Marker({
+                  map: map,
+                  position: new google.maps.LatLng(hotel.location[0], hotel.location[1]),
+                  title: hotel.name
+                })
+
+                const infowindow = new google.maps.InfoWindow({
+                    content:  marker.getTitle()
+                });
+                google.maps.event.addListener(marker, "click", () => {
+                    infowindow.open(map, marker);
+                });
+              }
+
+           
+            }
+        </script>
+    </head>
+<body>
+<h1 style="text-align: center;">Test Drive</h1>
+<form action="https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8" method="POST" id="dealerform">
+    <input type=hidden name="oid" value="00D1s0000008qnK">
+    <input type=hidden name="retURL" value="https://www.volvocars.com/in">
+    <input id="00N1s000000zQV2" maxlength="255" name="00N1s000000zQV2" size="20" type="hidden" value="Shanghai JiaDing 4S" /><br>
+    <input type="hidden" name="00N1s000000zEEi" value="" id="model">
+<table  style="margin-left:auto;margin-right:auto;">
+    <tr>
+        <td style="padding-bottom: 20px;"><h3>The car you want to test drive</h3></td>
+    </tr>
+	<tr style="height:100px;">
+		<td>
+            <img src="https://assets.volvocars.com/jp/~/media/web-forms-for-marketers/car_models/xc40_side.png?mh=97&mw=250" height="97" width="250">
+            <p><input type="checkbox" value="XC40"/>XC40</p>
+        </td>
+		<td>
+            <img src="https://assets.volvocars.com/jp/~/media/web-forms-for-marketers/car_models/xc60new.png?mh=97&mw=250" height="97" width="250">
+            <p><input type="checkbox" value="XC60"/>XC60</p>
+        </td>
+		<td>
+            <img src="https://assets.volvocars.com/jp/~/media/web-forms-for-marketers/car_models/xc90allnewside.png?mh=97&mw=250" height="97" width="250">
+            <p><input type="checkbox" value="XC90"/>XC90</p>
+        </td>
+		<td>
+            <img src="https://assets.volvocars.com/jp/~/media/web-forms-for-marketers/car_models/v40side.png?mh=97&mw=250" height="97" width="250">
+            <p><input type="checkbox" value="V40"/>V40</p>
+        </td>
+	</tr>
+
+	<tr style="height:100px;">
+		<td>
+            <img src="https://assets.volvocars.com/jp/~/media/shared-assets/navigation/cars/v60.png?mh=97&mw=250" height="97" width="250">
+            <p><input type="checkbox" value="V60"/>V60</p>
+        </td>
+		<td>
+            <img src="https://assets.volvocars.com/jp/~/media/web-forms-for-marketers/car_models/v90side.png?mh=97&mw=250" height="97" width="250">
+            <p><input type="checkbox" value="V90"/>V90</p>
+        </td>
+		<td>
+            <img src="https://assets.volvocars.com/jp/~/media/web-forms-for-marketers/car_models/v40ccside.png?mh=97&mw=250" height="97" width="250">
+            <p><input type="checkbox" value="V40 Cross Country"/>V40 Cross Country</p>
+        </td>
+		<td>
+            <img src="https://assets.volvocars.com/jp/~/media/shared-assets/navigation/cars/v60cc_silver.png?mh=97&mw=250" height="97" width="250">
+            <p><input type="checkbox" value="V60 Cross Country"/>V60 Cross Country</p>
+        </td>
+    </tr>
+	<tr style="height:100px;">
+		<td>
+            <img src="https://assets.volvocars.com/jp/~/media/web-forms-for-marketers/car_models/v90ccsideimg.png?mh=97&mw=250" height="97" width="250">
+            <p><input type="checkbox" value="V90 Cross Country">V90 Cross Country</p>
+        </td>
+		<td>
+            <img src="https://assets.volvocars.com/jp/~/media/shared-assets/navigation/cars/s60.png?mh=97&mw=250" height="97" width="250">
+            <p><input type="checkbox" value="S60"/>S60</p>
+        </td>
+	</tr>
+	<tr >
+        <td colspan="4" style="padding-top: 20px;"><h3>2-Volvo dealers you currently have or want to work with</h3></td>
+    </tr>
+    <tr>
+        <td colspan="4">
+            <label for="basic-url">Type your dealer Postal Code</label>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" id="dealerpostalcode">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary" type="button" id="searchDealer">Search</button>
+                </div>
+            </div>  
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4">
+            <div id="googleMap" style="width:100%;height:400px;"></div>
+        </td>
+       
+    </tr>
+	<tr>
+		<td colspan="2" style="padding-top: 20px;"><h3>Name etc.</h3></td>	
+		<td colspan="2" style="padding-top: 20px;"><h3>Contact Information</h3></td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <label for="basic-url">Last Name *</label>
+            <div class="input-group mb-3">
+                <input type="text" name="last_name" class="form-control">
+            </div>
+        </td>	
+        <td colspan="2">
+            <label for="basic-url">Zip Code*</label>
+            <div class="input-group mb-3">
+                <input type="text" name="zip" class="form-control">
+            </div></td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <label for="basic-url">First Name *</label>
+            <div class="input-group mb-3">
+                <input type="text" name="first_name" class="form-control">
+            </div>
+        </td>	
+        <td colspan="2">
+            <label for="basic-url">Email*</label>
+            <div class="input-group mb-3">
+                <input type="text" name="email" class="form-control">
+            </div></td>
+    </tr>
+    <tr>
+        <td><input type="submit" name="Submit" class="btn btn-primary btn-lg"></td>
+    </tr>
+</table>
+</form>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGpDlT3ebuVyC36yvCr51lPicr6yVlLXg&callback=getJSONMarkers"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
