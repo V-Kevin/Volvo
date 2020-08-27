@@ -28,8 +28,28 @@
                     }
                   });
 
+               var source= getUrlParameter('Source');
+               var campaignCode = getUrlParameter('CampaignCode');
+               if(source !=undefined || campaignCode !=undefined){
+                $("#lead_source").val(source);
+                $("#00N1s0000011Peg").val(campaignCode);
+               }
             });
-               
+            
+            var getUrlParameter = function getUrlParameter(sParam) {
+                var sPageURL = window.location.search.substring(1),
+                    sURLVariables = sPageURL.split('&'),
+                    sParameterName,
+                    i;
+            
+                for (i = 0; i < sURLVariables.length; i++) {
+                    sParameterName = sURLVariables[i].split('=');
+            
+                    if (sParameterName[0] === sParam) {
+                        return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                    }
+                }
+            };
        
 
             function getJSONMarkers() {
@@ -133,6 +153,10 @@
     <input type=hidden name="retURL" value="https://www.volvocars.com/in">
     <input id="00N1s000000zQV2" maxlength="255" name="00N1s000000zQV2" size="20" type="hidden" value="Shanghai JiaDing 4S" /><br>
     <input type="hidden" name="00N1s000000zEEi" value="" id="model">
+    <input  id="00N1s0000011Peg" maxlength="255" name="00N1s0000011Peg" size="20" type="hidden" />
+    <input  id="lead_source" name="lead_source" type="hidden"></select>
+
+
 <table  style="margin-left:auto;margin-right:auto;">
     <tr>
         <td style="padding-bottom: 20px;" colspan="4"><h3>The car you want to test drive</h3></td>
@@ -240,7 +264,7 @@
             </div></td>
     </tr>
     <tr>
-        <td><input type="submit" name="Submit" class="btn btn-primary btn-lg"></td>
+        <td><input type="submit" name="Submit" class="btn btn-primary btn-lg" Value="Submit"></td>
     </tr>
 </table>
 </form>
